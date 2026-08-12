@@ -1,0 +1,27 @@
+name: Build 3proxy for FreeBSD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build 3proxy inside FreeBSD VM
+        uses: vmactions/freebsd-vm@v1
+        with:
+          usesh: true
+          prepare: |
+            pkg install -y git gmake
+          run: |
+            git clone https://github.com/3proxy/3proxy.git
+            cd 3proxy
+            gmake -f Makefile.FreeBSD
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3proxy-freebsd
+          path: 3proxy/bin/3proxy
