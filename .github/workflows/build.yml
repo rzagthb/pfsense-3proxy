@@ -13,17 +13,17 @@ jobs:
       actions: read
       contents: read
     steps:
+      - name: Checkout local repository
+        uses: actions/checkout@v4
+
       - name: Get upstream version
         id: upstream
         run: |
           TAG=$(curl -s https://api.github.com/repos/3proxy/3proxy/releases/latest | jq -r .tag_name)
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          repository: 3proxy/3proxy
-          ref: ${{ steps.upstream.outputs.tag }}
+      - name: Clone upstream code
+        run: git clone --branch ${{ steps.upstream.outputs.tag }} https://github.com/3proxy/3proxy.git
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -31,11 +31,13 @@ jobs:
           languages: cpp
 
       - name: Build for CodeQL
-        run: make -f Makefile.Linux
+        run: |
+          cd 3proxy
+          make -f Makefile.Linux
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
-
+        
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
