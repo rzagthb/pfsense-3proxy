@@ -1,27 +1,69 @@
-name: Build 3proxy for FreeBSD
+name: Build and Scan 3proxy
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
 
 jobs:
-  build:
+  scan:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     steps:
-      - name: Build 3proxy inside FreeBSD VM
+      - name: Get upstream version
+        id: upstream
+        run: |
+          TAG=$(curl -s https://api.github.com/repos/3proxy/3proxy/releases/latest | jq -r .tag_name)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: 3proxy/3proxy
+          ref: ${{ steps.upstream.outputs.tag }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: cpp
+
+      - name: Build for CodeQL
+        run: make -f Makefile.Linux
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Get upstream version
+        id: upstream
+        run: |
+          TAG=$(curl -s https://api.github.com/repos/3proxy/3proxy/releases/latest | jq -r .tag_name)
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build in FreeBSD VM
         uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
-          prepare: |
-            pkg install -y git gmake
+          prepare: pkg install -y git gmake
           run: |
-            git clone https://github.com/3proxy/3proxy.git
+            git clone --branch ${{ steps.upstream.outputs.tag }} https://github.com/3proxy/3proxy.git
             cd 3proxy
             gmake -f Makefile.FreeBSD
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: 3proxy-freebsd
-          path: 3proxy/bin/3proxy
+          tag_name: ${{ steps.upstream.outputs.tag }}-freebsd
+          name: 3proxy ${{ steps.upstream.outputs.tag }} (FreeBSD/pfSense)
+          body: |
+            Compiled for pfSense / FreeBSD.
+            Upstream project: https://github.com/3proxy/3proxy
+            Upstream release: https://github.com/3proxy/3proxy/releases/tag/${{ steps.upstream.outputs.tag }}
+          files: 3proxy/bin/3proxy
