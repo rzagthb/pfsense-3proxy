@@ -71,4 +71,4 @@ jobs:
             Compiled for pfSense / FreeBSD.
             Upstream project: https://github.com/3proxy/3proxy
             Upstream release: https://github.com/3proxy/3proxy/releases/tag/${{ steps.upstream.outputs.tag }}
-          files: 3proxy/bin/3proxy
+          files: 3proxy/build/bin/3proxy
