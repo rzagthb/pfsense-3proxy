@@ -60,7 +60,7 @@ jobs:
             cd 3proxy
             mkdir build
             cd build
-            cmake -D3PROXY_USE_OPENSSL=ON ..
+            cmake -D3PROXY_USE_OPENSSL=ON -D3PROXY_USE_PCRE2=OFF ..
             cmake --build .
 
       - name: Create Release
