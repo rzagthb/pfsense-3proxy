@@ -52,6 +52,7 @@ jobs:
       - name: Build in FreeBSD VM
         uses: vmactions/freebsd-vm@v1
         with:
+          release: "14.1"
           usesh: true
           prepare: pkg install -y git cmake
           run: |
