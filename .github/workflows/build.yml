@@ -53,11 +53,11 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
-          prepare: pkg install -y git gmake
+          prepare: pkg install -y git gmake openssl
           run: |
             git clone --branch ${{ steps.upstream.outputs.tag }} https://github.com/3proxy/3proxy.git
             cd 3proxy
-            gmake -f Makefile.FreeBSD
+            gmake -f Makefile.FreeBSD WITH_SSL=1
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
