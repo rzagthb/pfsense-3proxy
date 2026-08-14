@@ -53,7 +53,7 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
-          prepare: pkg install -y git cmake openssl
+          prepare: pkg install -y git cmake
           run: |
             git clone --branch ${{ steps.upstream.outputs.tag }} https://github.com/3proxy/3proxy.git
             cd 3proxy
