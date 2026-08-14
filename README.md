@@ -2,7 +2,12 @@
 ---
 [![Upstream](https://img.shields.io/badge/Upstream-3proxy-blue?logo=github)](https://github.com/3proxy/3proxy)
 ___
-
+>[!NOTE]
+>The binary is built with the following options:
+>
+>-D3PROXY_USE_OPENSSL=ON — enables SSL support.
+>
+>-D3PROXY_USE_PCRE2=OFF — disables regular expression support.
 ```
 Diagnostics - Command Prompt
 ```
