@@ -24,3 +24,15 @@ pkg search git
 ```
 pkg install -y git
 ```
+```
+git clone https://github.com/rzagthb/pfsense-3proxy.git
+```
+```
+fetch -o ./pfsense-3proxy/ https://github.com/rzagthb/pfsense-3proxy/releases/latest/download/3proxy
+```
+```
+mkdir -p /usr/local/etc/3proxy
+```
+```
+cp ./pfsense-3proxy/3proxy.cfg /usr/local/etc/3proxy/3proxy.cfg
+```
