@@ -36,3 +36,15 @@ mkdir -p /usr/local/etc/3proxy
 ```
 cp ./pfsense-3proxy/3proxy.cfg /usr/local/etc/3proxy/3proxy.cfg
 ```
+```
+cp ./pfsense-3proxy/passwd /usr/local/etc/3proxy/passwd
+```
+```
+chmod +x ./pfsense-3proxy/3proxy
+```
+```
+cp ./pfsense-3proxy/3proxy /usr/local/bin/3proxy
+```
+```
+/usr/local/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg
+```
